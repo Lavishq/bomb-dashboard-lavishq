@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Home = () => {
+const Dashboard = () => {
   const classes = useStyles();
   const TVL = useTotalValueLocked();
   const bombFtmLpStats = useLpStatsBTC('BOMB-BTCB-LP');
@@ -178,6 +178,81 @@ const Home = () => {
         <title>{TITLE}</title>
       </Helmet>
       <BackgroundImage />
+      {/* <Grid item xs={12} sm={8}> */}
+
+      {/* Bomb Finance Summary */}
+      {/* <Grid xs={12} sm={8}> */}
+        <Paper>
+          <Box p={2} style={{ textAlign: 'center', color: 'white' }}>
+            <h1 style={{ fontSize: "22px" }}>Bomb Finance Summary</h1>
+            <hr />
+          </Box>
+          <Grid style={{ margin: '12px', display: 'flex' }}>
+            {/* <Grid item xs={12} sm={6}> */}
+              <Grid>
+                <Card>
+                  <CardContent align="center">
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        columnGap: 3,
+                        rowGap: 1,
+                        gridTemplateColumns: 'repeat(5, 1fr)',
+                      }}
+                    >
+                      <Box></Box>
+                      <Box>Current Supply</Box>
+                      <Box>Total Supply</Box>
+                      <Box>Price</Box>
+                      <Box></Box>
+
+                      <TokenSymbol size={32} symbol="BOMB" />
+                      <Box>$BOMB</Box>
+                      <Box>M</Box>
+                      <Box>K</Box>
+                      <Box>                <img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
+                      <TokenSymbol size={32} symbol="BSHARE" />
+                      <Box>$BSHARE</Box>
+                      <Box>M</Box>
+                      <Box>K</Box>
+                      <Box><img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
+
+                      <TokenSymbol size={32} symbol="BBOND" /> <Box>$BBOND</Box>
+                      <Box>M</Box>
+                      <Box>K</Box>
+                      <Box><img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+            {/* </Grid> */}
+            <Grid item xs={12} sm={6}>
+              <Card>
+                <CardContent align="center">
+                  <h2>current Epoch</h2><>0</>
+                  <hr />
+                  <>00:00:00</>
+                  Next Epoch in
+                  <hr />
+                  <>Live TWAP:<>000</></>
+                  <>TVL:<>000</></>
+                  <>Last Epoch TWAP:<>000</></>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Paper>
+      {/* </Grid> */}
+
+
+      {/* <Grid container spacing={3}>ll<Grid>ll
+        <Card>ll
+        </Card>
+      </Grid>
+      </Grid> */}
+      {/* </Grid> */}
+
       <Grid container spacing={3}>
         {/* Logo */}
         <Grid
@@ -279,7 +354,7 @@ const Home = () => {
 
         {/* TVL */}
         <Grid item xs={12} sm={4}>
-          <Card style={{'paddingTop': '10px'}}>
+          <Card style={{ 'paddingTop': '10px' }}>
             <CardContent align="center">
               <h2>Total Value Locked</h2>
               <CountUp style={{ fontSize: '25px' }} end={TVL} separator="," prefix="$" />
@@ -521,4 +596,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
