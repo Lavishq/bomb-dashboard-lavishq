@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import Page from '../../components/Page';
 import { createGlobalStyle } from 'styled-components';
-import CountUp from 'react-countup';
-import CardIcon from '../../components/CardIcon';
 import TokenSymbol from '../../components/TokenSymbol';
 import useBombStats from '../../hooks/useBombStats';
 import useLpStats from '../../hooks/useLpStats';
@@ -252,14 +250,12 @@ const Dashboard = () => {
         <Grid item xs={12} sm={6}>
           <Box style={{ textAlign: "right", textDecoration: "underline" }}>Read Investment Strategy &gt;</Box>
           <Box>
-
             <Button
               style={{ textDecoration: "none", fontWeight: "bolder", margin: '10px', width: "100%", backgroundColor: "#00ADE8" }}
             >INVEST NOW
             </Button>
           </Box>
           <Box>
-
             <Button
               style={{ textDecoration: "None", fontWeight: "bolder", margin: '10px', maxWidth: "100%", backgroundColor: "#00ADE8" }}
             >
@@ -328,7 +324,6 @@ const Dashboard = () => {
                       >
                         Withdraw
                       </Button>
-
                     </Box>
                     <Button
                       style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
@@ -349,17 +344,147 @@ const Dashboard = () => {
       </Grid>
       {/* </Grid> */}
       {/* Bond Farms */}
-      <Box p={2} style={{ textAlign: 'center', color: 'white' }}>
-        <h1 style={{ fontSize: "22px" }}>Bomb Finance Summary</h1>
-        <hr />
+      <Box p={2} >
+        <Paper>
+          <p style={{ fontSize: "22px", color: "white" }}>Bomb Farms</p>
+          <>Stake your LP tokens in our farms to start earning $BSHARE</>
+          <Box style={{ textAlign: "right" }}>
+            <Button
+              style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+            >
+              Claim rewards
+            </Button>
+          </Box>
+          <hr />
+          <Box>
+            
+            <TokenSymbol symbol="BOMB-BTCB-LP" />
+            BOMB-BTCB
+            <button
+              style={{ fontSize: "12px", textDecoration: "none", borderRadius: "5px", backgroundColor: "#00E8A2", size: "small" }}
+            >
+              Recommended
+            </button>
+            <Box style={{ textAlign: "right" }}>TVL: $00000</Box>
+            <hr />
+            <Grid container justify="center" spacing={3}>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent style={{ textAlign: 'center' }}>
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Daily  Returns</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent align="center">
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Your Stake</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent align="center">
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
+                      Earned <small>(TWAP)</small>
+                    </Typography>
+                    <Typography>
+                      <small>per 10,000 BOMB</small>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card >
+                  <Box>
+                    <Button
+                      style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                    >
+                      Deposit
+                    </Button>
+                    <Button
+                      style={{ textDecoration: "none", maxWidth: "100%", border: " 1px solid #fff" }}
+                    >
+                      Withdraw
+                    </Button>
+                  </Box>
+                  <Button
+                    style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                  >
+                    Claim rewards
+                  </Button>
+                </Card>
+              </Grid>
+            </Grid>
+            <hr />
+
+            {/* BSHARE-BNB */}
+            <TokenSymbol symbol="BSHARE-BNB-LP" />
+            BSHARE-BNB
+            <button
+              style={{ fontSize: "12px", textDecoration: "none", borderRadius: "5px", backgroundColor: "#00E8A2", size: "small" }}
+            >
+              Recommended
+            </button>
+            <Box style={{ textAlign: "right" }}>TVL: $00000</Box>
+            <Grid container justify="center" spacing={3}>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent style={{ textAlign: 'center' }}>
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Daily  Returns</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent align="center">
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Your Stake</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card className={classes.gridItem}>
+                  <CardContent align="center">
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
+                      Earned <small>(TWAP)</small>
+                    </Typography>
+                    <Typography>
+                      <small>per 10,000 BOMB</small>
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+                <Card >
+                  <Box>
+                    <Button
+                      style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                    >
+                      Deposit
+                    </Button>
+                    <Button
+                      style={{ textDecoration: "none", maxWidth: "100%", border: " 1px solid #fff" }}
+                    >
+                      Withdraw
+                    </Button>
+                  </Box>
+                  <Button
+                    style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                  >
+                    Claim rewards
+                  </Button>
+                </Card>
+              </Grid>
+            </Grid>
+
+          </Box>
+        </Paper>
       </Box>
       {/* Bonds */}
       <Box p={2} style={{ textAlign: 'center', color: 'white' }}>
         <h1 style={{ fontSize: "22px" }}>Bomb Finance Summary</h1>
         <hr />
       </Box>
-
-
     </Page>
   );
 };
