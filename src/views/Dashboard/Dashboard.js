@@ -24,12 +24,23 @@ import useBombFinance from '../../hooks/useBombFinance';
 import { ReactComponent as IconDiscord } from '../../assets/img/discord.svg';
 //import { ReactComponent as IconTelegram } from '../../assets/img/telegram.svg';
 import { Helmet } from 'react-helmet';
-import BombImage from '../../assets/img/bomb.png';
+import moment from 'moment';
 
 //import useBombMaxiStats from '../../hooks/useBombMaxiStats';
 
 import HomeImage from '../../assets/img/background.jpg';
 import ProgressCountdown from '../Boardroom/components/ProgressCountdown';
+import useCurrentEpoch from '../../hooks/useCurrentEpoch';
+import useTreasuryAllocationTimes from '../../hooks/useTreasuryAllocationTimes';
+import useCashPriceInEstimatedTWAP from '../../hooks/useCashPriceInEstimatedTWAP';
+import CountUp from 'react-countup';
+import { getDisplayBalance } from '../../utils/formatBalance';
+import useTotalStakedOnBoardroom from '../../hooks/useTotalStakedOnBoardroom';
+import { Label } from '@material-ui/icons';
+import useStakedTokenPriceInDollars from '../../hooks/useStakedTokenPriceInDollars';
+import Value from '../../components/Value';
+import useStakedBalanceOnBoardroom from '../../hooks/useStakedBalanceOnBoardroom';
+import useEarningsOnBoardroom from '../../hooks/useEarningsOnBoardroom';
 const BackgroundImage = createGlobalStyle`
   body {
     background: url(${HomeImage}) repeat !important;
@@ -171,6 +182,23 @@ const Dashboard = () => {
   //     </Paper>
   //   </grid>,
   // );
+  const earnings = useEarningsOnBoardroom();
+  const cashStat = useCashPriceInEstimatedTWAP();
+  const stakedBalance = useStakedBalanceOnBoardroom();
+  const totalStaked = useTotalStakedOnBoardroom();
+  const currentEpoch = useCurrentEpoch();
+  const { to } = useTreasuryAllocationTimes();
+  const scalingFactor = useMemo(() => (cashStat ? Number(cashStat.priceInDollars).toFixed(4) : null), [cashStat]);
+  const stakedTokenPriceInDollars = useStakedTokenPriceInDollars('BSHARE', bombFinance.BSHARE);
+  const tokenPriceInDollars = useMemo(
+    () =>
+      stakedTokenPriceInDollars
+        ? (Number(stakedTokenPriceInDollars) * Number(getDisplayBalance(stakedBalance))).toFixed(2).toString()
+        : null,
+    [stakedTokenPriceInDollars, stakedBalance],
+  );
+  const earnedInDollars = (Number(tokenPriceInDollars) * Number(getDisplayBalance(earnings))).toFixed(2);
+  const tvlBoardroom = useTotalValueLocked()
 
   return (
     <Page>
@@ -208,19 +236,41 @@ const Dashboard = () => {
 
                   <TokenSymbol size={32} symbol="BOMB" />
                   <Box>$BOMB</Box>
-                  <Box>M</Box>
-                  <Box>K</Box>
-                  <Box>                <img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
+                  <Box> {roundAndFormatNumber(bombTotalSupply, 2)}</Box>
+                  <Box>{bombPriceInBNB ? bombPriceInBNB : '-.----'} BTC</Box>
+                  <Box>
+                    <Button
+                      onClick={() => {
+                        bombFinance.watchAssetInMetamask('BOMB');
+                      }}
+                    >
+                      <img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} />
+                    </Button>
+                  </Box>
                   <TokenSymbol size={32} symbol="BSHARE" />
                   <Box>$BSHARE</Box>
-                  <Box>M</Box>
-                  <Box>K</Box>
-                  <Box><img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
-
+                  <Box>{roundAndFormatNumber(bShareTotalSupply, 2)}</Box>
+                  <Box>{bSharePriceInBNB ? bSharePriceInBNB : '-.----'} BNB</Box>
+                  <Box><Button
+                    onClick={() => {
+                      bombFinance.watchAssetInMetamask('BSHARE');
+                    }}
+                  >
+                    <img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} />
+                  </Button>
+                  </Box>
                   <TokenSymbol size={32} symbol="BBOND" /> <Box>$BBOND</Box>
-                  <Box>M</Box>
-                  <Box>K</Box>
-                  <Box><img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} /></Box>
+                  <Box>{roundAndFormatNumber(tBondTotalSupply, 2)}</Box>
+                  <Box>{tBondPriceInBNB ? tBondPriceInBNB : '-.----'} BTC</Box>
+                  <Box>
+                    <Button
+                      onClick={() => {
+                        bombFinance.watchAssetInMetamask('BBOND');
+                      }}
+                    >
+                      <img alt="metamask fox" style={{ width: '20px' }} src={MetamaskFox} />
+                    </Button>
+                  </Box>
                 </Box>
               </CardContent>
             </Card>
@@ -230,14 +280,15 @@ const Dashboard = () => {
           <Grid item xs={12} sm={6}>
             <Card>
               <CardContent align="center">
-                <h2>current Epoch</h2><>0</>
+                <h2>current Epoch</h2>
+                <Typography>{Number(currentEpoch)}</Typography>
                 <hr />
-                <>00:00:00</>
                 Next Epoch in
+                <ProgressCountdown base={moment().toDate()} hideBar={true} deadline={to} description="Next Epoch" />
                 <hr />
-                <>Live TWAP:<>000</></>
-                <>TVL:<>000</></>
-                <>Last Epoch TWAP:<>000</></>
+                <Typography>Live TWAP: <span style={{ color: "#01d497" }}>{scalingFactor} BTC</span></Typography>
+                <Typography>TVL: <span style={{ color: "#01d497" }}> <CountUp style={{ fontSize: '25px' }} end={TVL} separator="," prefix="$" /></span></Typography>
+                <Typography>Last Epoch TWAP: <span style={{ color: "#01d497" }}>000</span></Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -281,34 +332,34 @@ const Dashboard = () => {
             <Box style={{ textAlign: "left" }}>
               Stake BSHARE and earn BOMB every epoch
 
-              <Box style={{ textAlign: "right" }}>TVL: $00000</Box>
+              <Box style={{ textAlign: "right" }}>TVL: ${tvlBoardroom}</Box>
               <hr />
-              <Box style={{ textAlign: "right" }}>Total Staked<TokenSymbol size={16} symbol="BSHARE" />0000</Box>
+              <Box style={{ textAlign: "right" }}>Total Staked<TokenSymbol size={16} symbol="BSHARE" /><Typography>{getDisplayBalance(totalStaked)}</Typography></Box>
               <Grid container justify="center" spacing={3}>
                 <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                   <Card className={classes.gridItem}>
-                    <CardContent style={{ textAlign: 'center' }}>
-                      <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Next Epoch</Typography>
-                    </CardContent>
+
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Daily Returns</Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                   <Card className={classes.gridItem}>
-                    <CardContent align="center">
-                      <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Current Epoch</Typography>
-                    </CardContent>
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Your Stake</Typography>
+                    <Typography><TokenSymbol size={16} symbol="BSHARE" />{getDisplayBalance(stakedBalance)}</Typography>
+                    <Typography>≈ ${tokenPriceInDollars}</Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                   <Card className={classes.gridItem}>
-                    <CardContent align="center">
-                      <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
-                        BOMB PEG <small>(TWAP)</small>
-                      </Typography>
-                      <Typography>
-                        <small>per 10,000 BOMB</small>
-                      </Typography>
-                    </CardContent>
+                    <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
+                      EARNED
+                    </Typography>
+                    <Typography><TokenSymbol size={16} symbol="BOMB" />
+                      {getDisplayBalance(earnings)}
+                    </Typography>
+                    <Typography>≈
+                      ${earnedInDollars}
+                    </Typography>
                   </Card>
                 </Grid>
                 <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
@@ -342,7 +393,7 @@ const Dashboard = () => {
           </Paper>
         </Grid>
       </Grid>
-      {/* </Grid> */}
+
       {/* Bond Farms */}
       <Box p={2} >
         <Paper>
@@ -357,7 +408,7 @@ const Dashboard = () => {
           </Box>
           <hr />
           <Box>
-            
+
             <TokenSymbol symbol="BOMB-BTCB-LP" />
             BOMB-BTCB
             <button
@@ -427,6 +478,7 @@ const Dashboard = () => {
               Recommended
             </button>
             <Box style={{ textAlign: "right" }}>TVL: $00000</Box>
+            <hr />
             <Grid container justify="center" spacing={3}>
               <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                 <Card className={classes.gridItem}>
@@ -481,9 +533,45 @@ const Dashboard = () => {
         </Paper>
       </Box>
       {/* Bonds */}
-      <Box p={2} style={{ textAlign: 'center', color: 'white' }}>
-        <h1 style={{ fontSize: "22px" }}>Bomb Finance Summary</h1>
-        <hr />
+      <Box p={2} >
+        <Paper>
+          <p style={{ fontSize: "22px", color: "white" }}>Bombs</p><>
+            <TokenSymbol symbol="BBOND" />BBOND can be purchased only on contraction periods, when TWAP of BOMB is below 1</>
+
+          <h1 style={{ fontSize: "22px" }}>Bonds</h1>
+          <hr />
+          <Grid container justify="center" spacing={3}>
+            <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+              <Card className={classes.gridItem}>
+                <CardContent style={{ textAlign: 'center' }}>
+                  <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Current Price: (Bomb)^2</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+              <Card className={classes.gridItem}>
+                <CardContent align="center">
+                  <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>Available to redeem: </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
+              <Card className={classes.gridItem}>
+                <CardContent align="center">
+                  <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
+                    Purchase BBond <small>(Bomb is over peg)</small>
+                    <Button>Purchase</Button>
+                  </Typography>
+                  <hr />
+                  <Typography style={{ textTransform: 'uppercase', color: '#f9d749' }}>
+                    Redeem Bomb
+                    <Button>Redeem</Button>
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Paper>
       </Box>
     </Page>
   );
