@@ -16,9 +16,7 @@ import { roundAndFormatNumber } from '../../0x';
 import MetamaskFox from '../../assets/img/metamask-fox.svg';
 import { Box, Button, Card, CardContent, Grid, Paper, Typography } from '@material-ui/core';
 import ZapModal from '../Bank/components/ZapModal';
-import { Alert } from '@material-ui/lab';
-import { IoCloseOutline } from 'react-icons/io5';
-import { BiLoaderAlt } from 'react-icons/bi';
+import FarmCard from '../Farm/FarmCard';
 import { makeStyles } from '@material-ui/core/styles';
 import useBombFinance from '../../hooks/useBombFinance';
 import { ReactComponent as IconDiscord } from '../../assets/img/discord.svg';
@@ -41,6 +39,10 @@ import useStakedTokenPriceInDollars from '../../hooks/useStakedTokenPriceInDolla
 import Value from '../../components/Value';
 import useStakedBalanceOnBoardroom from '../../hooks/useStakedBalanceOnBoardroom';
 import useEarningsOnBoardroom from '../../hooks/useEarningsOnBoardroom';
+import useBanks from '../../hooks/useBanks';
+import useHarvestFromBoardroom from '../../hooks/useHarvestFromBoardroom';
+import useClaimRewardCheck from '../../hooks/boardroom/useClaimRewardCheck';
+import useApprove, { ApprovalState } from '../../hooks/useApprove';
 const BackgroundImage = createGlobalStyle`
   body {
     background: url(${HomeImage}) repeat !important;
@@ -198,7 +200,11 @@ const Dashboard = () => {
     [stakedTokenPriceInDollars, stakedBalance],
   );
   const earnedInDollars = (Number(tokenPriceInDollars) * Number(getDisplayBalance(earnings))).toFixed(2);
-  const tvlBoardroom = useTotalValueLocked()
+  const { onReward } = useHarvestFromBoardroom();
+  const canClaimReward = useClaimRewardCheck();
+  const [banks] = useBanks();
+  const activeBanks = banks.filter((bank) => !bank.finished);
+  const [approveStatus, approve] = useApprove(bombFinance.BSHARE, bombFinance.contracts.Boardroom.address);
 
   return (
     <Page>
@@ -332,7 +338,7 @@ const Dashboard = () => {
             <Box style={{ textAlign: "left" }}>
               Stake BSHARE and earn BOMB every epoch
 
-              <Box style={{ textAlign: "right" }}>TVL: ${tvlBoardroom}</Box>
+              <Box style={{ textAlign: "right" }}>TVL: <CountUp style={{ fontSize: '25px' }} end={TVL} separator="," prefix="$" /></Box>
               <hr />
               <Box style={{ textAlign: "right" }}>Total Staked<TokenSymbol size={16} symbol="BSHARE" /><Typography>{getDisplayBalance(totalStaked)}</Typography></Box>
               <Grid container justify="center" spacing={3}>
@@ -365,21 +371,36 @@ const Dashboard = () => {
                 <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                   <Card >
                     <Box>
+                      {/* <Button
+                       
+                      >
+                        Deposit
+                      </Button> */}
                       <Button
+                        disabled={approveStatus !== ApprovalState.NOT_APPROVED}
+                        className={approveStatus === ApprovalState.NOT_APPROVED ? 'shinyButton' : 'shinyButtonDisabled'}
                         style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                        onClick={approve}
                       >
                         Deposit
                       </Button>
                       <Button
-                        style={{ textDecoration: "none", maxWidth: "100%", border: " 1px solid #fff" }}
+                        onClick={onReward}
+                        style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                        className={earnings.eq(0) || !canClaimReward ? 'shinyButtonDisabled' : 'shinyButton'}
+                        disabled={earnings.eq(0) || !canClaimReward}
                       >
                         Withdraw
                       </Button>
                     </Box>
+
                     <Button
+                      onClick={onReward}
                       style={{ textDecoration: "None", maxWidth: "100%", border: " 1px solid #fff" }}
+                      className={earnings.eq(0) || !canClaimReward ? 'shinyButtonDisabled' : 'shinyButton'}
+                      disabled={earnings.eq(0) || !canClaimReward}
                     >
-                      Claim rewards
+                      Claim Reward
                     </Button>
                   </Card>
                 </Grid>
@@ -418,6 +439,15 @@ const Dashboard = () => {
             </button>
             <Box style={{ textAlign: "right" }}>TVL: $00000</Box>
             <hr />
+            {/* <Grid container spacing={3} style={{ marginTop: '20px' }}>
+                  {activeBanks
+                    .filter((bank) => bank.sectionInUI === 3)
+                    .map((bank) => (
+                      <React.Fragment key={bank.name}>
+                        <FarmCard bank={bank} />
+                      </React.Fragment>
+                    ))}
+                </Grid> */}
             <Grid container justify="center" spacing={3}>
               <Grid item xs={12} md={2} lg={2} className={classes.gridItem}>
                 <Card className={classes.gridItem}>
